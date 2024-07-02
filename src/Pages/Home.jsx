@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../Components/Header";
 import SongBar from "../Components/SongBar";
-import Card from "../Components/card";
+import Card from "../Components/Card";
 import Layout from "../Layout/layout";
 import { server } from "../main";
 import { setCurrentSong } from "../states/Reducers/SongReducer";
