@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Pages/home";
+import Home, { songs } from "./Pages/Home";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/signup";
 import Search from "./Pages/search";
@@ -10,6 +10,9 @@ import axios from "axios";
 import { userExists } from "./states/Reducers/userReducer";
 import Playlist from "./Pages/Playlist";
 import Collection from "./Pages/Collection";
+import { setCurrentSong } from "./states/Reducers/SongReducer";
+import Profile from "./Pages/Profile";
+import Track from "./Pages/Track";
 // import Lotu from "./Components/Lotu";
 
 const server = "http://localhost:5000";
@@ -17,7 +20,13 @@ const server = "http://localhost:5000";
 const App = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { currentSong } = useSelector((state) => state.songs);
 
+  useEffect(() => {
+    if (!currentSong) {
+      dispatch(setCurrentSong(songs[0]));
+    }
+  }, []);
   useEffect(() => {
     axios
       .get(`${server}/api/v1/user/me`, { withCredentials: true })
@@ -33,7 +42,9 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/collection/tracks" element={<Collection />} />
+        <Route path="/track/:id" element={<Track />} />
         <Route path="/playlist/:id" element={<Playlist />} />
         {/* <Route path="/lotu" element={<Lotu />} /> */}
       </Routes>

@@ -23,7 +23,7 @@ const Header = ({ bgT = false }) => {
   return (
     <header className="w-full">
       <div
-        className={`h-16 w-[56rem] flex ${
+        className={`h-16 w-[52.8rem] flex ${
           bgT ? "bg-transparent" : "bg-[#101010]"
         } px-4 items-center justify-between fixed top-2 right-2 rounded-tr-md rounded-tl-md z-[98]`}
       >
@@ -63,13 +63,16 @@ const Header = ({ bgT = false }) => {
               )}
             </button>
             {menu && (
-              <div className="w-[14rem] p-2 bg-[#282828] shadow rounded-md absolute z-[999] top-12 right-0 text-zinc-300 flex flex-col">
+              <div className="w-[14rem] p-1 bg-[#282828] shadow rounded-md absolute z-[999] top-12 right-0 text-zinc-300 flex flex-col">
                 <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex justify-between items-center">
                   Account <FaArrowUpRightFromSquare />
                 </button>
-                <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex justify-between items-center">
+                <Link
+                  to={"/profile"}
+                  className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex justify-between items-center"
+                >
                   Profile
-                </button>
+                </Link>
                 <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex justify-between items-center">
                   Upgrade to Premium <FaArrowUpRightFromSquare />
                 </button>

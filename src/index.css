@@ -140,4 +140,17 @@ input[type="range"]::-ms-thumb {
   .check {
     opacity: 1;
   }
+  .div > button {
+    opacity: 1;
+  }
+  .number{
+    opacity: 0;
+  }
+  .audio{
+    opacity: 0;
+  }
+}
+
+.like:hover .play {
+   opacity: 1;
 }

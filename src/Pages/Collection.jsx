@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BiLogoSpotify } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
-import { FaRegFolder } from "react-icons/fa6";
+import { FaHeart, FaRegFolder } from "react-icons/fa6";
 import { FiEdit2 } from "react-icons/fi";
 import { LuClock3, LuMinusCircle } from "react-icons/lu";
 import { MdAddchart, MdIosShare } from "react-icons/md";
@@ -42,7 +42,9 @@ const Collection = () => {
         <div className="w-full">
           <div className="w-full px-4 h-[30vh] bg-gradient-to-b pt-20 from-[#525252] to-[#2C2C2C]">
             <div className="flex gap-4 items-end h-full py-4">
-              <div className="w-32 h-32 rounded-md bg-[#282828]"></div>
+              <div className="w-32 h-32 rounded-md bg-l flex items-center justify-center">
+                <FaHeart className="text-4xl" />
+              </div>
               <div>
                 <h4 className="text-xm font-semibold text-zinc-200 ml-1">
                   Playlist
@@ -131,9 +133,9 @@ const Collection = () => {
                 </div>
               </div>
               <div className="flex flex-col mt-4">
-                {/* {playlist?.songs?.map((song,i) => (
+                {user?.likedSongs?.map((song,i) => (
                   <PlaylistSongItem key={song?.id} i={i} song={song} />
-                ))} */}
+                ))}
               </div>
             </div>
           </div>

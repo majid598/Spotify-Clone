@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { MdAddchart } from "react-icons/md";
+import { MdAddchart, MdIosShare } from "react-icons/md";
 import { RiMusic2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { server } from "../main";
@@ -11,9 +11,12 @@ import { LuMinusCircle } from "react-icons/lu";
 import { FiEdit2 } from "react-icons/fi";
 import { TbMusicPlus } from "react-icons/tb";
 import { BiPlus } from "react-icons/bi";
+import { useSelector } from "react-redux";
+import { TiPin, TiPinOutline } from "react-icons/ti";
 
 const PlaylistItem = ({ playlist }) => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -36,6 +39,20 @@ const PlaylistItem = ({ playlist }) => {
       .then(({ data }) => {
         console.log(data);
         navigate("/");
+      })
+      .catch((err) => console.log(err));
+  };
+  const pinList = () => {
+    axios
+      .put(
+        `${server}/api/v1/playlist/pin/${playlist?._id}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .then(({ data }) => {
+        console.log(data);
       })
       .catch((err) => console.log(err));
   };
@@ -87,8 +104,19 @@ const PlaylistItem = ({ playlist }) => {
           <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
             <FaRegFolder className="text-lg" /> Move to folder
           </button>
-          <button className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
-            <BsPinFill className="text-lg" /> Pin playlist
+          <button
+            onClick={pinList}
+            className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center"
+          >
+            {user?.pinedPlayLists.includes(playlist?._id) ? (
+              <>
+                <TiPin className="text-lg text-green-600" /> Unpin Playlist
+              </>
+            ) : (
+              <>
+                <TiPinOutline className="text-lg" /> Pin playlist
+              </>
+            )}
           </button>
           <button className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
             <MdIosShare className="text-lg" /> Share
@@ -112,8 +140,17 @@ const PlaylistItem = ({ playlist }) => {
           )}
         </div>
         <div>
-          <h2 className="font-semibold">{playlist?.name}</h2>
+          <h2
+            className={`font-semibold ${
+              user?.pinedPlayLists.includes(playlist?._id) && "text-green-600"
+            }`}
+          >
+            {playlist?.name}
+          </h2>
           <div className="mt-1 text-zinc-400 font-semibold text-sm flex items-center">
+            {user?.pinedPlayLists.includes(playlist?._id) && (
+              <TiPin className="text-green-600 mr-2" />
+            )}
             Playlist{" "}
             <span className="w-1 h-1 mx-1 rounded-full bg-zinc-400 inline-block"></span>
             {playlist?.user?.name}

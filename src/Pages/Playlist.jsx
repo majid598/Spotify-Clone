@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BiLogoSpotify } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
-import { FaRegFolder } from "react-icons/fa6";
+import { FaPause, FaRegFolder } from "react-icons/fa6";
 import { FiEdit2 } from "react-icons/fi";
 import { LuClock3, LuMinusCircle } from "react-icons/lu";
 import { MdAddchart, MdIosShare } from "react-icons/md";
@@ -13,11 +13,15 @@ import Dialog from "../Components/Dialog";
 import Header from "../Components/Header";
 import Layout from "../Layout/layout";
 import { server } from "../main";
-import { songs } from "./home";
+import { songs } from "./Home";
 import PlaylistSongItem from "./PlaylistSongItem";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentSong } from "../states/Reducers/SongReducer";
+import useAudioPlayer from "../Components/useAudioPlayer";
 
 const Playlist = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [playlist, setPlaylist] = useState(null);
   const [name, setName] = useState(playlist?.name);
   const [desc, setDesc] = useState(playlist?.description);
@@ -26,6 +30,8 @@ const Playlist = () => {
   const [menu, setMenu] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const { id } = useParams();
+  const { currentSong, isPlaying } = useSelector((state) => state.songs);
+  const { togglePlayPause } = useAudioPlayer();
 
   const save = () => {
     axios
@@ -77,16 +83,20 @@ const Playlist = () => {
   };
 
   const openSpotify = () => {
-    
-    const spotifyUri = 'spotify:track:https://open.spotify.com/playlist/7dwKZVAukGA6px7xIkXq1f?si=52cbdc855c2b4054&pt=d6a6ea29c00c806a20fbebf940f782a8'; // Example: 'spotify:track:3n3Ppam7vgaVa1iaRUc9Lp'
-    
+    const spotifyUri =
+      "spotify:track:https://open.spotify.com/playlist/7dwKZVAukGA6px7xIkXq1f?si=52cbdc855c2b4054&pt=d6a6ea29c00c806a20fbebf940f782a8"; // Example: 'spotify:track:3n3Ppam7vgaVa1iaRUc9Lp'
+
     // Open Spotify desktop app
     window.location.href = spotifyUri;
-  }
+  };
 
-  useEffect(() => {
-    setName(playlist?.name);
-  }, []);
+  const handlePlayFirstSong = () => {
+    if (currentSong && isPlaying) {
+      togglePlayPause();
+    } else {
+      dispatch(setCurrentSong(playlist?.songs[0]));
+    }
+  };
 
   useEffect(() => {
     axios
@@ -98,7 +108,7 @@ const Playlist = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [playlist]);
+  }, [playlist, axios]);
   return (
     <Layout>
       <div className="lay relative w-[62rem] h-[88vh] bg-gradient-to-b from-[#202020] to-[#121212] overflow-x-hidden overflow-y-scroll ml rounded-md">
@@ -106,7 +116,14 @@ const Playlist = () => {
         <div className="w-full">
           <div className="w-full px-4 h-[30vh] bg-gradient-to-b pt-20 from-[#525252] to-[#2C2C2C]">
             <div className="flex gap-4 items-end h-full py-4">
-              <div className="w-32 h-32 rounded-md bg-[#282828]"></div>
+              <div className="w-32 h-32 rounded-md bg-[#282828] overflow-hidden">
+                {playlist?.songs?.length > 0 && (
+                  <img
+                    src={playlist?.songs[0]?.img}
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
               <div>
                 <h4 className="text-xm font-semibold text-zinc-200 ml-1">
                   Playlist
@@ -163,14 +180,24 @@ const Playlist = () => {
                 <button className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
                   <MdIosShare className="text-lg" /> Share
                 </button>
-                <button onClick={openSpotify} className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
+                <button
+                  onClick={openSpotify}
+                  className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center"
+                >
                   <BiLogoSpotify className="text-lg" /> Open in Desktop app
                 </button>
               </div>
             )}
             {playlist?.songs?.length > 0 && (
-              <button className="play bg-green-600 p-4 rounded-full">
-                <FaPlay className="text-black text-xl" />
+              <button
+                onClick={handlePlayFirstSong}
+                className="play bg-green-600 p-4 rounded-full"
+              >
+                {isPlaying ? (
+                  <FaPause className="text-black text-xl" />
+                ) : (
+                  <FaPlay className="text-black text-xl" />
+                )}
               </button>
             )}
             <button
@@ -217,7 +244,10 @@ const Playlist = () => {
                           <img src={song.img} alt="" />
                         </div>
                         <div className="flex flex-col">
-                          <Link className="font-semibold hover:underline">
+                          <Link
+                            to={`/track/${song.id}`}
+                            className="font-semibold hover:underline"
+                          >
                             {song.title}
                           </Link>
                           <Link className="text-sm text-zinc-400 hover:underline font-semibold">

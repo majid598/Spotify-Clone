@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../Components/Header";
 import SongBar from "../Components/SongBar";
@@ -8,9 +8,12 @@ import Layout from "../Layout/layout";
 import { server } from "../main";
 import { setCurrentSong } from "../states/Reducers/SongReducer";
 import { userNotExists } from "../states/Reducers/userReducer";
+import ArtistCard from "../Components/ArtistCard";
+import { FaHeart, FaPause, FaPlay } from "react-icons/fa";
+import useAudioPlayer from "../Components/useAudioPlayer";
 
 export const song = {
-  id: Math.random() * Date.now(),
+  id: 1234567890,
   title: "Pehle bhi mein",
   artist: "Emma heesters",
   mp3: new Audio("/asets/mp3/mein.mp3"),
@@ -19,28 +22,28 @@ export const song = {
 
 export const songs = [
   {
-    id: Math.random() * Date.now(),
+    id: "1234567412340",
     title: "Pehle bhi mein",
     artist: "Emma heesters",
     url: "/assts/mp3/mein.mp3",
     img: "/assets/images.jpg",
   },
   {
-    id: Math.random() * Date.now(),
+    id: "12345316785590",
     title: "Heeriye",
     artist: "Arijit Singh",
     url: "/assets/mp3/heeriye.mp3",
     img: "/assets/Arijit-4.jpg",
   },
   {
-    id: Math.random() * Date.now(),
+    id: "1425431544567890",
     title: "Pal kesa pal",
     artist: "Arijit Singh",
-    url: "/assets/mp3/Mashup.mp3",
+    url: "/assets/mp3/pal.mp3",
     img: "/assets/Arijit-3.jpg",
   },
   {
-    id: Math.random() * Date.now(),
+    id: "12fasd72435890",
     title: "Kalnak - Title Track",
     artist: "Arijit Singh",
     url: "/assets/mp3/kalank.mp3",
@@ -48,10 +51,26 @@ export const songs = [
   },
 ];
 
+export const artists = [
+  {
+    id: Math.random(),
+    name: "Arijit singh",
+    profile: "/assets/Arijit-3.jpg",
+  },
+  {
+    id: Math.random(),
+    name: "Emma heesters",
+    profile: "/assets/images.jpg",
+  },
+];
+
 const Home = ({ user }) => {
   const dispatch = useDispatch();
   const [menu, setMenu] = useState(false);
-  const { currentSong } = useSelector((state) => state.songs);
+  const [all, setAll] = useState(true);
+  const [music, setMusic] = useState(false);
+  const { currentSong, isPlaying } = useSelector((state) => state.songs);
+  const { togglePlayPause } = useAudioPlayer();
   const logout = () => {
     axios
       .get(`${server}/api/v1/user/logout`, { withCredentials: true })
@@ -62,42 +81,101 @@ const Home = ({ user }) => {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
-    dispatch(setCurrentSong(songs[0]));
-  }, []);
+  const handlePlay = () => {
+    if (currentSong && isPlaying) {
+      togglePlayPause();
+    } else {
+      dispatch(setCurrentSong(user?.likedSongs[0]));
+    }
+  };
 
   return (
     <Layout>
-      <div className="lay relative w-[62rem] h-[88vh] pt-20 bg-[#181818] overflow-x-hidden overflow-y-scroll ml rounded-md">
+      <div className="lay relative w-[62rem] h-[88vh] pt-20 bg-[#181818] overflow-x-hidden overflow-y-scroll pb-40 rounded-md">
         <Header />
-        <div className="h-14 flex justify-between relative items-center px-4">
-          <span className="text-3xl font-bold">Good morning {user?.name}</span>
-          <span className="text-sm font-bold opacity-60 absolute bottom-0 right-6">
-            Show all
-          </span>
+        <div className="flex fixed px-4 gap-2">
+          <button
+            onClick={() => {
+              setAll(true);
+              setMusic(false);
+            }}
+            className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+              all ? "bg-white text-black" : "bg-[#232323] hover:bg-[#353535]"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => {
+              setAll(false);
+              setMusic(true);
+            }}
+            className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+              music ? "bg-white text-black" : "bg-[#232323] hover:bg-[#353535]"
+            }`}
+          >
+            Music
+          </button>
         </div>
-        <div className="cards w-full h-[70vh] flex flex-wrap gap-6 p-8">
-          {songs.map((song) => {
-            return <Card key={song.id} song={song} />;
-          })}
+        <div className="grid grid-cols-2 mt-16 gap-2 px-4">
+          <button
+            to={"/collection/tracks"}
+            className={`like w-full hover:bg-[#] overflow-hidden bg-[#333333] h-12 flex pr-2 items-center justify-between rounded-md relative cursor-pointer`}
+          >
+            <div className="flex items-center gap-x-2 h-full">
+              <div className="w-14 h-full bg-l flex items-center justify-center">
+                <FaHeart />
+              </div>
+              <h2 className="font-bold text-sm">Liked Songs</h2>
+            </div>
+            <button>
+              <button
+                onClick={handlePlay}
+                className="play bg-green-600 p-2.5 transition-all duration-300 opacity-0 rounded-full"
+              >
+                {isPlaying ? (
+                  <FaPause className="text-black" />
+                ) : (
+                  <FaPlay className="text-black" />
+                )}
+              </button>
+            </button>
+          </button>
+          <div className="w-full h-12 rounded-md bg-red-600"></div>
+          <div className="w-full h-12 rounded-md bg-red-600"></div>
+          <div className="w-full h-12 rounded-md bg-red-600"></div>
         </div>
-        <div className="h-14 flex justify-between mt-36 relative items-center px-4">
-          <span className="text-3xl hover:underline cursor-pointer font-bold">
-            Spotify playlists
-          </span>
-          <span className="text-sm font-bold opacity-60 absolute bottom-0 right-6">
-            Show all
-          </span>
-        </div>
-        <div className="cards w-full h-[70vh] grid grid-cols-5 gap-6 p-8">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-        </div>
+        {music && (
+          <>
+            <div className="cards w-full grid grid-cols-5 p-8 px-0">
+              {songs.map((song) => {
+                return <Card key={song.id} song={song} />;
+              })}
+            </div>
+          </>
+        )}
+        {all && (
+          <>
+            <div className="h-14 flex justify-between mt-8 relative items-center px-4">
+              <span className="text-2xl font-bold">Made For {user?.name}</span>
+              <span className="text-sm font-bold opacity-60">Show all</span>
+            </div>
+            <div className="cards w-full grid grid-cols-5 px-0">
+              {songs.map((song) => {
+                return <Card key={song.id} song={song} />;
+              })}
+            </div>
+            <div className="h-14 flex justify-between mt-8 relative items-center px-4">
+              <span className="text-2xl font-bold">Popular Artists</span>
+              <span className="text-sm font-bold opacity-60">Show all</span>
+            </div>
+            <div className="cards w-full grid grid-cols-5 px-0">
+              {artists.map((artist) => {
+                return <ArtistCard key={artist.id} artist={artist} />;
+              })}
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );

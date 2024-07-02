@@ -7,14 +7,14 @@ import { GoHome, GoHomeFill } from "react-icons/go";
 import { TbMusicPlus, TbWorld } from "react-icons/tb";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PlaylistItem from "../Pages/PlaylistItem";
 import { server } from "../main";
 import { FilledSearchIcon } from "./Dialog";
 
 const sidebar = () => {
- 
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [menu, setMenu] = useState(false);
   const [playlists, setPlaylists] = useState([null]);
@@ -25,6 +25,7 @@ const sidebar = () => {
       .then(({ data }) => {
         console.log(data);
         setMenu(false);
+        navigate(`/playlist/${data?.playList?._id}`);
       })
       .catch((err) => console.log(err));
   };
@@ -44,7 +45,7 @@ const sidebar = () => {
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
-      className="w-[25rem] mr-2 flex flex-col gap-2"
+      className="w-[30rem] mr-2 flex flex-col gap-2"
     >
       <div className="uper flex items-center p-5 bg-[#101010] rounded-md w-full">
         <ul className="flex flex-col gap-5">
@@ -154,7 +155,7 @@ const sidebar = () => {
             </div>
             <div
               id="playlists"
-              className="w-full h-full pl-3 py-3 flex flex-col overflow-x-hidden overflow-y-scroll"
+              className="w-full pb-40 h-full pl-3 py-3 flex flex-col overflow-x-hidden overflow-y-scroll"
             >
               <Link
                 to={"/collection/tracks"}

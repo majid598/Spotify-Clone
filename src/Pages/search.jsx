@@ -76,7 +76,36 @@ const search = () => {
     "Gray",
     "Green",
   ];
-  
+
+  const alphabetColors = [
+    "Aqua",
+    "Beige",
+    "Coral",
+    "DeepSkyBlue",
+    "Eggshell",
+    "FloralWhite",
+    "Gainsboro",
+    "Honeydew",
+    "Ivory",
+    "Jasmine",
+    "Khaki",
+    "Lavender",
+    "MintCream",
+    "NavajoWhite",
+    "OldLace",
+    "PeachPuff",
+    "Quartz",
+    "Rose",
+    "Seashell",
+    "Thistle",
+    "Ultramarine",
+    "Vanilla",
+    "WhiteSmoke",
+    "Xanadu",
+    "Yellow",
+    "Zinc",
+  ];
+
   return (
     <Layout>
       <div className="lay relative w-[62rem] h-[88vh] bg-[#181818] overflow-x-hidden overflow-y-scroll ml rounded-md">

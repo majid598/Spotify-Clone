@@ -3,17 +3,24 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { BiLogoSpotify, BiPlus } from "react-icons/bi";
 import { CiTrash } from "react-icons/ci";
-import { FaCheck, FaRegFolder } from "react-icons/fa6";
+import { FaCheck, FaPause, FaPlay, FaRegFolder } from "react-icons/fa6";
 import { LuRadio } from "react-icons/lu";
 import { MdIosShare } from "react-icons/md";
 import { RiAlbumLine, RiUserReceived2Fill } from "react-icons/ri";
 import { Link, useParams } from "react-router-dom";
 import { server } from "../main";
 import { IoMdAnalytics } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentSong } from "../states/Reducers/SongReducer";
+import useAudioPlayer from "../Components/useAudioPlayer";
+import { Audio as LoaderAudio } from "react-loader-spinner";
 
 const PlaylistSongItem = ({ song, i }) => {
+  const dispatch = useDispatch();
   const [duration, setDuration] = useState(null);
   const [menu, setMenu] = useState(false);
+  const { currentSong, isPlaying } = useSelector((state) => state.songs);
+  const { togglePlayPause } = useAudioPlayer();
 
   const { id } = useParams();
 
@@ -33,6 +40,14 @@ const PlaylistSongItem = ({ song, i }) => {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
+
+  const handlePlay = () => {
+    if (currentSong && isPlaying) {
+      togglePlayPause();
+    } else {
+      dispatch(setCurrentSong(song));
+    }
+  };
   useEffect(() => {
     const audio = new Audio(song.url);
     const getDuration = () => {
@@ -49,14 +64,45 @@ const PlaylistSongItem = ({ song, i }) => {
 
   return (
     <div className="phover w-full hover min-h-16 p-2 grid grid-col-l-5 items-center pr-5 rounded-md hover:bg-[#2A2A2A] cursor-pointer">
-      <div className="font-semibold text-zinc-400">{i + 1}</div>
+      <div className="font-semibold flex items-center justify-center text-zinc-400 div">
+        <span
+          className={`number ${
+            isPlaying && currentSong?.id === song.id
+              ? "opacity-0"
+              : "opacity-100"
+          }`}
+        >
+          {i + 1}
+        </span>
+        {isPlaying && currentSong?.id === song.id && (
+          <div className="absolute audio">
+            <LoaderAudio
+              height="16"
+              width="16"
+              color="green"
+              ariaLabel="audio-loading"
+            />
+          </div>
+        )}
+        <button
+          onClick={handlePlay}
+          className="absolute cursor-default opacity-0"
+        >
+          {isPlaying && currentSong?.id === song.id ? <FaPause /> : <FaPlay />}
+        </button>
+      </div>
       <div className="w-full flex items-center">
         <div className="flex gap-2 items-center">
           <div className="w-12 overflow-hidden h-12 rounded-md bg-l flex items-center justify-center">
             <img src={song.img} alt="" />
           </div>
           <div className="flex flex-col">
-            <Link className="font-semibold hover:underline">{song.title}</Link>
+            <Link
+              to={`/track/${song?.id}`}
+              className="font-semibold hover:underline"
+            >
+              {song.title}
+            </Link>
             <Link className="text-sm text-zinc-400 hover:underline font-semibold">
               {song.artist}
             </Link>
@@ -85,13 +131,13 @@ const PlaylistSongItem = ({ song, i }) => {
               <LuRadio className="text-lg" /> Go to song radio
             </button>
             <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
-              <RiUserReceived2Fill  className="text-lg" /> Go to artist
+              <RiUserReceived2Fill className="text-lg" /> Go to artist
             </button>
             <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
-              <RiAlbumLine  className="text-xl" /> Go to album
+              <RiAlbumLine className="text-xl" /> Go to album
             </button>
             <button className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
-              <IoMdAnalytics  className="text-lg" /> View credits
+              <IoMdAnalytics className="text-lg" /> View credits
             </button>
             <button className="w-full p-3 rounded-sm cursor-default text-start border-b border-[#3E3E3E] hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
               <MdIosShare className="text-lg" /> Share

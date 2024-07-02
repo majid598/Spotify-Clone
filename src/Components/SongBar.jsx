@@ -59,7 +59,7 @@ const SongBar = () => {
   }, [volume]);
 
   return (
-    <div className={`fixed hidden bottom-0 left-0 ${user ? "h-24" : "h-20"} w-full`}>
+    <div className={`fixed bottom-0 left-0 ${user ? "h-24" : "h-20"} w-full`}>
       {user ? (
         <div className="grid grid-col-3 w-full h-full bg-black p-5 py-3">
           <div className="w-full h-full flex gap-4 items-center">
