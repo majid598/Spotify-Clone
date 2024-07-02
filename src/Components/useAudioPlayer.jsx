@@ -1,11 +1,13 @@
 // useAudioPlayer.js
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPlayingState } from "../states/Reducers/SongReducer";
 
 const useAudioPlayer = () => {
   const audioRef = useRef(new Audio());
   const dispatch = useDispatch();
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const currentSong = useSelector((state) => state.songs.currentSong);
   const isPlaying = useSelector((state) => state.songs.isPlaying);
 
@@ -40,6 +42,23 @@ const useAudioPlayer = () => {
       pauseAudio();
     };
   }, [currentSong, dispatch]);
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    return () => {
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+    };
+  }, [currentSong]);
 
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -53,6 +72,10 @@ const useAudioPlayer = () => {
   return {
     isPlaying,
     togglePlayPause,
+    currentTime,
+    duration,
+    setCurrentTime,
+    audioRef,
   };
 };
 

@@ -2,44 +2,142 @@
 @tailwind components;
 @tailwind utilities;
 
-
-body{
-    background-color: black;
+body {
+  background-color: black;
 }
 
-*{
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    text-decoration: none;
-    box-sizing: border-box;
+* {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-#playlists::-webkit-scrollbar{
-    width: 12px;
-    background-color: transparent;
+#playlists::-webkit-scrollbar {
+  width: 12px;
+  background-color: transparent;
 }
 
-#playlists::-webkit-scrollbar-thumb{
-    width: 100%;
-    background-color: transparent;
-    transition: all 0.5s;
+#playlists::-webkit-scrollbar-thumb {
+  width: 100%;
+  background-color: transparent;
+  transition: all 0.5s;
 }
 
-#playlists:hover::-webkit-scrollbar-thumb{
-    background-color: #898989;
+#playlists:hover::-webkit-scrollbar-thumb {
+  background-color: #898989;
 }
 
+.card:hover .play {
+  bottom: 5px;
+  opacity: 1;
+}
 
-.card:hover .play{
-    bottom: 5px;
+.lay::-webkit-scrollbar {
+  display: none;
+}
+
+.main {
+  background: linear-gradient(to bottom, #282828, #030303);
+}
+
+.shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.grid-col-3 {
+  grid-template-columns: 28% 48% 24%;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 20px 0;
+}
+
+/* Track styling */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  animate: 0.2s;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: #ccc;
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  animate: 0.2s;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+/* Thumb styling */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ddd;
+  cursor: pointer;
+  margin-top: -5px; /* You need to specify a margin to make thumb properly aligned */
+  box-shadow: 0 0 2px 0 #555;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  border-radius: 50px;
+  background: #ddd;
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-thumb {
+  height: 15px;
+  width: 15px;
+  border-radius: 50px;
+  background: #ddd;
+  cursor: pointer;
+}
+
+.bg-l {
+  background: linear-gradient(to bottom right, #4b13f1, #7563e3, #a4bdd4);
+}
+.shadow-sm {
+  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.4);
+}
+
+.btn:hover > span {
+  background-color: white;
+}
+
+.hover:hover > div > h4 {
+  color: white;
+}
+
+.grid-col-5 {
+  grid-template-columns: 3% 37% 25% 25% 10%;
+}
+.grid-col-l-5 {
+  grid-template-columns: 3% 37% 25% 20% 15%;
+}
+
+.phover:hover {
+  .btn,
+  .check {
     opacity: 1;
-}
-
-.lay::-webkit-scrollbar{
-    display: none;
-}
-
-.main{
-    background: linear-gradient(to top,#000,#111111,black);
   }
+}

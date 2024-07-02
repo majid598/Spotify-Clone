@@ -5,6 +5,8 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./states/store.jsx";
 
+export const server = "http://localhost:5000";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
