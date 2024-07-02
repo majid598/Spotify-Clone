@@ -7,8 +7,8 @@ import axios from "axios";
 import { userExists, userNotExists } from "../states/Reducers/userReducer";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebookF } from "react-icons/fa6";
+import { server } from "../main";
 
-const server = "http://localhost:5000";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

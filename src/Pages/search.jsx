@@ -131,9 +131,6 @@ const search = () => {
           <div className="w-full flex justify-end">
             {user ? (
               <div className="flex gap-3 relative">
-                <button className="rounded-full hover:scale-105 text-black px-4 py-2 text-sm bg-white font-bold">
-                  Explore Premium
-                </button>
                 <button className="rounded-full hover:scale-105 flex gap-2 items-center bg-[#242424] px-4 py-2 text-sm text-white font-bold">
                   <FaDownload /> Install App
                 </button>

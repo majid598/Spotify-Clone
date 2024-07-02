@@ -10,9 +10,9 @@ import { RxSpeakerLoud } from "react-icons/rx";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useAudioPlayer from "./useAudioPlayer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const SongBar = () => {
+const SongBar = ({ elementRef }) => {
   const { user } = useSelector((state) => state.auth);
   const { currentSong, isPlaying } = useSelector((state) => state.songs);
   const { currentTime, duration, setCurrentTime, audioRef } = useAudioPlayer();
@@ -42,6 +42,13 @@ const SongBar = () => {
       gainNode.gain.value = newVolume; // Set new volume
     }
   };
+  const handleFullScreen = () => {
+    // if (elementRef.current && elementRef.current.requestFullscreen) {
+    elementRef.current.requestFullscreen();
+    // } else {
+    //   alert("Your browser does not support fullscreen mode.");
+    // }
+  };
 
   useEffect(() => {
     // Create audio context and gain node on component mount
@@ -59,7 +66,7 @@ const SongBar = () => {
   }, [volume]);
 
   return (
-    <div className={`fixed bottom-0 left-0 ${user ? "h-24" : "h-20"} w-full`}>
+    <div className={`fixed bottom-0 z-[999] left-0 ${user ? "h-24" : "h-20"} w-full`}>
       {user ? (
         <div className="grid grid-col-3 w-full h-full bg-black p-5 py-3">
           <div className="w-full h-full flex gap-4 items-center">
@@ -152,7 +159,10 @@ const SongBar = () => {
             <button className="text-zinc-400 hover:text-white">
               <CgMiniPlayer className="text-lg" />
             </button>
-            <button className="text-zinc-400 hover:text-white">
+            <button
+              onClick={handleFullScreen}
+              className="text-zinc-400 hover:text-white"
+            >
               <AiOutlineFullscreen className="text-lg" />
             </button>
           </div>

@@ -1,24 +1,25 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import Collection from "./Pages/Collection";
 import Home, { songs } from "./Pages/Home";
 import Login from "./Pages/Login";
-import SignUp from "./Pages/Signup";
-import Search from "./Pages/search";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import { useEffect } from "react";
-import axios from "axios";
-import { userExists } from "./states/Reducers/userReducer";
 import Playlist from "./Pages/Playlist";
-import Collection from "./Pages/Collection";
-import { setCurrentSong } from "./states/Reducers/SongReducer";
 import Profile from "./Pages/Profile";
+import SignUp from "./Pages/Signup";
 import Track from "./Pages/Track";
+import Search from "./Pages/search";
+import { setCurrentSong } from "./states/Reducers/SongReducer";
+import { userExists } from "./states/Reducers/userReducer";
 // import Lotu from "./Components/Lotu";
 
 const server = "http://localhost:5000";
 
 const App = () => {
   const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
   const { currentSong } = useSelector((state) => state.songs);
 
