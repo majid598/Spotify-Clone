@@ -180,7 +180,10 @@ const sidebar = () => {
                 </div>
               </Link>
               {playlists?.map((item, i) => (
-                <PlaylistItem key={item?._id} playlist={item} />
+                <PlaylistItem
+                  key={item?._id}
+                  playlist={item}
+                />
               ))}
             </div>
           </>

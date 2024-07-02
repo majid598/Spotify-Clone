@@ -21,7 +21,7 @@ import Layout from "../Layout/layout";
 import { server } from "../main";
 import { setCurrentSong } from "../states/Reducers/SongReducer";
 import PlaylistSongItem from "./PlaylistSongItem";
-import { songs } from "./home";
+import { songs } from "./Home";
 import { CiTrash } from "react-icons/ci";
 import { IoMdAnalytics } from "react-icons/io";
 

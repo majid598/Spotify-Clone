@@ -20,7 +20,7 @@ const Profile = () => {
   const save = () => {
     axios
       .put(
-        `${server}/api/v1/user/profile/edit`,
+        `${server}/api/v1/user/me/profile/edit`,
         { name },
         { withCredentials: true }
       )

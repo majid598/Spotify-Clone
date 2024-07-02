@@ -13,7 +13,7 @@ import Dialog from "../Components/Dialog";
 import Header from "../Components/Header";
 import Layout from "../Layout/layout";
 import { server } from "../main";
-import { songs } from "./home";
+import { songs } from "./Home";
 import PlaylistSongItem from "./PlaylistSongItem";
 import { useSelector } from "react-redux";
 
