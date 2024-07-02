@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home, { songs } from "./Pages/Home";
 import Login from "./Pages/Login";
-import SignUp from "./Pages/signup";
+import SignUp from "./Pages/Signup";
 import Search from "./Pages/search";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
