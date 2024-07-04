@@ -5,7 +5,7 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./states/store.jsx";
 
-export const server = import.meta.env.VITE_SERVER;
+export const server = "https://spotifybackend-1.onrender.com";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
