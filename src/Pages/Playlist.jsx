@@ -211,17 +211,19 @@ const Playlist = () => {
           </div>
           <div className="w-full px-5 mt-4">
             <div className="w-full mt-6">
-              <div className="w-full grid border-b pb-1 border-zinc-700 px-2 grid-col-5 text-zinc-400 font-bold">
-                <div className="w-full text-2xl flex items-center">#</div>
-                <div className="w-full flex items-center text-sm">Title</div>
-                <div className="w-full flex items-center text-sm">Album</div>
-                <div className="w-full flex items-center text-sm">
-                  Date added
+              {playlist?.songs?.length > 0 && (
+                <div className="w-full grid border-b pb-1 border-zinc-700 px-2 grid-col-5 text-zinc-400 font-bold">
+                  <div className="w-full text-2xl flex items-center">#</div>
+                  <div className="w-full flex items-center text-sm">Title</div>
+                  <div className="w-full flex items-center text-sm">Album</div>
+                  <div className="w-full flex items-center text-sm">
+                    Date added
+                  </div>
+                  <div className="w-full flex items-center">
+                    <LuClock3 />
+                  </div>
                 </div>
-                <div className="w-full flex items-center">
-                  <LuClock3 />
-                </div>
-              </div>
+              )}
               <div className="flex flex-col mt-4">
                 {playlist?.songs?.map((song, i) => (
                   <PlaylistSongItem key={song?.id} i={i} song={song} />

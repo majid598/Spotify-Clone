@@ -1,18 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../Layout/layout";
 import { BiBell, BiSearch } from "react-icons/bi";
 import { FaChevronLeft, FaChevronRight, FaDownload } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { userNotExists } from "../states/Reducers/userReducer";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { server } from "../main";
+import { songs } from "./Home";
+import Card from "../Components/Card";
+import ArtistCard from "../Components/ArtistCard";
 
 const search = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [menu, setMenu] = useState(false);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const searchQuery = params.get("search") || "";
+  const [searchTerm, setSearchTerm] = useState("");
+  const [all, setAll] = useState(true);
+  const [songs, setSongs] = useState(false);
+  const [playlists, setPlaylists] = useState(false);
+  const [albums, setAlbums] = useState(false);
+  const [artists, setArtists] = useState(false);
+  const [profiles, setProfiles] = useState(false);
+  const [genres, setGenres] = useState(false);
+  const [users, setUsers] = useState([null]);
+  const [type, setType] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+    navigate(`/search?${type}=${event.target.value}`);
+  };
+
+  // const filteredSongs = songs.filter((song) => {
+  //   song.title.toLowerCase().includes(searchTerm.toLowerCase());
+  // });
+
+  const filteredSongs = [];
+
   const logout = () => {
     axios
       .get(`${server}/api/v1/user/logout`, { withCredentials: true })
@@ -43,29 +72,6 @@ const search = () => {
     "CornflowerBlue",
     "Cornsilk",
     "Crimson",
-    "Cyan",
-    "DarkBlue",
-    "DarkCyan",
-    "DarkGoldenRod",
-    "DarkGray",
-    "DarkGreen",
-    "DarkKhaki",
-    "DarkMagenta",
-    "DarkOliveGreen",
-    "DarkOrange",
-    "DarkOrchid",
-    "DarkRed",
-    "DarkSalmon",
-    "DarkSeaGreen",
-    "DarkSlateBlue",
-    "DarkSlateGray",
-    "DarkTurquoise",
-    "DarkViolet",
-    "DeepPink",
-    "DeepSkyBlue",
-    "DimGray",
-    "DodgerBlue",
-    "FireBrick",
     "FloralWhite",
     "ForestGreen",
     "Fuchsia",
@@ -77,34 +83,27 @@ const search = () => {
     "Green",
   ];
 
-  const alphabetColors = [
-    "Aqua",
-    "Beige",
-    "Coral",
-    "DeepSkyBlue",
-    "Eggshell",
-    "FloralWhite",
-    "Gainsboro",
-    "Honeydew",
-    "Ivory",
-    "Jasmine",
-    "Khaki",
-    "Lavender",
-    "MintCream",
-    "NavajoWhite",
-    "OldLace",
-    "PeachPuff",
-    "Quartz",
-    "Rose",
-    "Seashell",
-    "Thistle",
-    "Ultramarine",
-    "Vanilla",
-    "WhiteSmoke",
-    "Xanadu",
-    "Yellow",
-    "Zinc",
-  ];
+  const filteredUsers = users.filter((user) => {
+    return user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchQuery = params.get("search");
+    if (searchQuery) {
+      setSearchTerm(searchQuery);
+    }
+  }, [location.search]);
+  useEffect(() => {
+    axios
+      .get(`${server}/api/v1/user/get/all`, { withCredentials: true })
+      .then(({ data }) => {
+        setUsers(data.users);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [users]);
 
   return (
     <Layout>
@@ -125,6 +124,8 @@ const search = () => {
                 className="h-full w-full bg-[#242424] text-sm text-[#9d9d9d] outline-none focus:ring-2 ring-white ring-inset py-2 p-2 pl-10 border-[1px] border-transparent hover:border-[#565656] rounded-full"
                 type="search"
                 placeholder="What do you want to listen to ?"
+                value={searchTerm}
+                onChange={handleSearch}
               />
             </div>
           </div>
@@ -188,15 +189,162 @@ const search = () => {
             )}
           </div>
         </div>
-        <div className="px-4 py-10">
-          <h1 className="text-2xl font-bold">Browse All</h1>
+        {searchTerm.length > 0 && (
+          <div className="flex fixed px-4 gap-2">
+            <button
+              onClick={() => {
+                setAll(true);
+                setSongs(false);
+                setPlaylists(false);
+                setAlbums(false);
+                setArtists(false);
+                setProfiles(false);
+                setGenres(false);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                all ? "bg-white text-black" : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(true);
+                setPlaylists(false);
+                setAlbums(false);
+                setArtists(false);
+                setProfiles(false);
+                setGenres(false);
+                setType("tracks")
+                navigate(`/search?tracks=${searchTerm}`);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                songs
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Songs
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(false);
+                setPlaylists(true);
+                setAlbums(false);
+                setArtists(false);
+                setProfiles(false);
+                setGenres(false);
+                setType("playlists")
+                navigate(`/search?playlists=${searchTerm}`);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                playlists
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Playlists
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(false);
+                setPlaylists(false);
+                setAlbums(true);
+                setArtists(false);
+                setProfiles(false);
+                setGenres(false);
+                setType("albums")
+                navigate(`/search?albums=${searchTerm}`);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                albums
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Albums
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(false);
+                setPlaylists(false);
+                setAlbums(false);
+                setArtists(true);
+                setProfiles(false);
+                setGenres(false);
+                setType("artists")
+                navigate(`/search?artists=${searchTerm}`);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                artists
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Artists
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(false);
+                setPlaylists(false);
+                setAlbums(false);
+                setArtists(false);
+                setProfiles(false);
+                setGenres(true);
+                setType("genres")
+                navigate(`/search?genres=${searchTerm}`);
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                genres
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Genres & Moods
+            </button>
+            <button
+              onClick={() => {
+                setAll(false);
+                setSongs(false);
+                setPlaylists(false);
+                setAlbums(false);
+                setArtists(false);
+                setProfiles(true);
+                setGenres(false);
+                setType("users")
+                navigate(`/search?users=${searchTerm}`)
+              }}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                profiles
+                  ? "bg-white text-black"
+                  : "bg-[#232323] hover:bg-[#353535]"
+              }`}
+            >
+              Profiles
+            </button>
+          </div>
+        )}
+        <div className="px-4">
+          <h1 className="text-2xl font-bold mt-16">Browse All</h1>
           <div className="w-full grid grid-cols-4 gap-4 py-5">
-            {colors.map((color) => (
+            {filteredSongs.map((item) => (
+              <Card song={item} />
+            ))}
+            {profiles &&
+              filteredUsers?.map((item, i) => (
+                <ArtistCard artist={item} role="profile" />
+              ))}
+            {/* {colors.map((color) => (
               <div
                 style={{ backgroundColor: color }}
                 className="w-full h-[16vh] rounded-xl"
               ></div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>

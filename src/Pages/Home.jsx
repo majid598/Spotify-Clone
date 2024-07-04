@@ -6,7 +6,7 @@ import SongBar from "../Components/SongBar";
 import Card from "../Components/Card";
 import Layout from "../Layout/layout";
 import { server } from "../main";
-import { setCurrentSong } from "../states/Reducers/SongReducer";
+import { setCurrentSong, setPlaylistId } from "../states/Reducers/SongReducer";
 import { userNotExists } from "../states/Reducers/userReducer";
 import ArtistCard from "../Components/ArtistCard";
 import { FaHeart, FaPause, FaPlay } from "react-icons/fa";
@@ -69,8 +69,12 @@ const Home = ({ user }) => {
   const [menu, setMenu] = useState(false);
   const [all, setAll] = useState(true);
   const [music, setMusic] = useState(false);
-  const { currentSong, isPlaying } = useSelector((state) => state.songs);
+  const { currentSong, isPlaying, playlistId } = useSelector(
+    (state) => state.songs
+  );
   const { togglePlayPause } = useAudioPlayer();
+  const [playlists, setPlaylists] = useState([null]);
+
   const logout = () => {
     axios
       .get(`${server}/api/v1/user/logout`, { withCredentials: true })
@@ -82,12 +86,23 @@ const Home = ({ user }) => {
   };
 
   const handlePlay = () => {
-    if (currentSong && isPlaying) {
+    if (currentSong && currentSong.id === user?.likedSongs[0].id && isPlaying) {
       togglePlayPause();
     } else {
       dispatch(setCurrentSong(user?.likedSongs[0]));
+      dispatch(setPlaylistId("likeSongs"));
     }
   };
+
+  useEffect(() => {
+    axios
+      .get(`${server}/api/v1/playlist/my`, { withCredentials: true })
+      .then(({ data }) => {
+        // console.log(data);
+        setPlaylists(data.playLists);
+      })
+      .catch((err) => console.log(err));
+  }, [axios, playlists]);
 
   return (
     <Layout>
@@ -133,7 +148,7 @@ const Home = ({ user }) => {
                 onClick={handlePlay}
                 className="play bg-green-600 p-2.5 transition-all duration-300 opacity-0 rounded-full"
               >
-                {isPlaying ? (
+                {isPlaying && playlistId === "likeSongs" ? (
                   <FaPause className="text-black" />
                 ) : (
                   <FaPlay className="text-black" />
@@ -141,7 +156,44 @@ const Home = ({ user }) => {
               </button>
             </button>
           </button>
-          <div className="w-full h-12 rounded-md bg-red-600"></div>
+          <button
+            to={"/collection/tracks"}
+            className={`like w-full hover:bg-[#] overflow-hidden bg-[#333333] h-12 flex pr-2 items-center justify-between rounded-md relative cursor-pointer`}
+          >
+            <div className="flex items-center gap-x-2 h-full">
+              <div className="w-14 h-full flex items-center justify-center">
+                <img
+                  src={playlists[0]?.songs[0]?.img}
+                  className="w-full h-full"
+                  alt=""
+                />
+              </div>
+              <h2 className="font-bold text-sm">{playlists[0]?.name}</h2>
+            </div>
+            <button>
+              <button
+                onClick={() => {
+                  if (
+                    currentSong &&
+                    currentSong.id === playlists[0]?.songs[0].id &&
+                    isPlaying
+                  ) {
+                    togglePlayPause();
+                  } else {
+                    dispatch(setCurrentSong(playlists[0]?.songs[0]));
+                    dispatch(setPlaylistId(playlists[0]?._id));
+                  }
+                }}
+                className="play bg-green-600 p-2.5 transition-all duration-300 opacity-0 rounded-full"
+              >
+                {isPlaying && playlistId === playlists[0]?._id ? (
+                  <FaPause className="text-black" />
+                ) : (
+                  <FaPlay className="text-black" />
+                )}
+              </button>
+            </button>
+          </button>
           <div className="w-full h-12 rounded-md bg-red-600"></div>
           <div className="w-full h-12 rounded-md bg-red-600"></div>
         </div>

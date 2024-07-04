@@ -1,27 +1,38 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiLibrary, BiPlus } from "react-icons/bi";
-import { FaArrowRight, FaHeart, FaSearch } from "react-icons/fa";
+import { FaArrowRight, FaChevronLeft, FaHeart, FaSearch } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa6";
 import { GoHome, GoHomeFill } from "react-icons/go";
 import { TbMusicPlus, TbWorld } from "react-icons/tb";
 import { TfiMenuAlt } from "react-icons/tfi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import PlaylistItem from "../Pages/PlaylistItem";
 import { server } from "../main";
+import { setFolderOpen } from "../states/Reducers/SongReducer";
 import { FilledSearchIcon } from "./Dialog";
+import Folder from "./Folder";
 
 const sidebar = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [menu, setMenu] = useState(false);
   const [playlists, setPlaylists] = useState([null]);
+  const [folders, setFolders] = useState([null]);
+  const { folderOpen, folderName, openedFolder } = useSelector(
+    (state) => state.songs
+  );
 
   const createPlayList = () => {
     axios
-      .get(`${server}/api/v1/playlist/new`, { withCredentials: true })
+      .post(
+        `${server}/api/v1/playlist/new`,
+        { folder: false },
+        { withCredentials: true }
+      )
       .then(({ data }) => {
         console.log(data);
         setMenu(false);
@@ -29,8 +40,15 @@ const sidebar = () => {
       })
       .catch((err) => console.log(err));
   };
-
-  // console.log(playlists);
+  const createPlayListFolder = () => {
+    axios
+      .get(`${server}/api/v1/playlist/new/folder`, { withCredentials: true })
+      .then(({ data }) => {
+        console.log(data);
+        setMenu(false);
+      })
+      .catch((err) => console.log(err));
+  };
 
   useEffect(() => {
     axios
@@ -40,7 +58,14 @@ const sidebar = () => {
         setPlaylists(data.playLists);
       })
       .catch((err) => console.log(err));
-  }, [axios, playlists]);
+    axios
+      .get(`${server}/api/v1/playlist/my/folders`, { withCredentials: true })
+      .then(({ data }) => {
+        // console.log(data);
+        setFolders(data.folders);
+      })
+      .catch((err) => console.log(err));
+  }, [axios, playlists, folders]);
 
   return (
     <div
@@ -97,8 +122,23 @@ const sidebar = () => {
         <div className="nav w-full h-14 px-5 flex items-center justify-between">
           <button className="flex font-bold items-end opacity-70 hover:opacity-100 transition-all duration-300">
             <BiLibrary className="text-2xl" />
-            <span>Your Library</span>
+            {!folderOpen && <span>Your Library</span>}
           </button>
+          {folderOpen && (
+            <div className="flex absolute left-14 gap-3 font-bold">
+              <button
+                onClick={() => {
+                  dispatch(setFolderOpen(false));
+                }}
+                className="text-zinc-400 transition-all duration-300 hover:text-white"
+              >
+                <FaChevronLeft />
+              </button>
+              <button className="text-zinc-400 transition-all duration-300 hover:text-white">
+                {folderName}
+              </button>
+            </div>
+          )}
           {user ? (
             <div className="flex gap-1 items-center">
               <div className="relative">
@@ -110,7 +150,10 @@ const sidebar = () => {
                     >
                       <TbMusicPlus className="text-lg" /> Create a new Playlist
                     </button>
-                    <button className="w-full flex items-center gap-x-2 p-3 rounded-md hover:bg-[#3E3E3E] font-semibold text-zinc-200 text-sm cursor-default text-start">
+                    <button
+                      onClick={createPlayListFolder}
+                      className="w-full flex items-center gap-x-2 p-3 rounded-md hover:bg-[#3E3E3E] font-semibold text-zinc-200 text-sm cursor-default text-start"
+                    >
                       <FaRegFolder /> Create a Playlist Folder
                     </button>
                   </div>
@@ -134,17 +177,23 @@ const sidebar = () => {
         </div>
         {user ? (
           <>
-            <div className="flex gap-x-2 px-4">
-              <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
-                Playlists
+            {!folderOpen ? (
+              <div className="flex gap-x-2 px-4">
+                <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
+                  Playlists
+                </button>
+                <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
+                  Artists
+                </button>
+                <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
+                  Albums
+                </button>
+              </div>
+            ) : (
+              <button className="ml-4 px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
+                By you
               </button>
-              <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
-                Artists
-              </button>
-              <button className="px-3 py-1.5 text-sm font-semibold rounded-full bg-[#232323] hover:bg-[#2A2A2A] transition-all duration-300">
-                Albums
-              </button>
-            </div>
+            )}
             <div className="flex mt-3 items-center justify-between px-4">
               <button className="rounded-full text-zinc-400 transition-all duration-300 hover:text-white hover:bg-[#1E1E1E] h-8 w-8 flex items-center justify-center">
                 <FaSearch />
@@ -157,34 +206,48 @@ const sidebar = () => {
               id="playlists"
               className="w-full pb-40 h-full pl-3 py-3 flex flex-col overflow-x-hidden overflow-y-scroll"
             >
-              <Link
-                to={"/collection/tracks"}
-                className={`w-full ${
-                  location.pathname === `/collection/tracks`
-                    ? "bg-[#232323] hover:bg-[#393939]"
-                    : "hover:bg-[#1A1A1A]"
-                } min-h-16 p-2 flex items-center gap-2 rounded-md relative cursor-pointer`}
-              >
-                <div className="w-12 h-12 rounded-md bg-l flex items-center justify-center">
-                  <FaHeart />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Liked Songs</h2>
-                  <div className="flex gap-2 mt-1 items-center">
-                    <div className="text-zinc-400 font-semibold text-sm flex items-center">
-                      Playlist{" "}
-                      <span className="w-1 h-1 mx-1 rounded-full bg-zinc-400 inline-block"></span>
-                      {user?.likedSongs?.length} Songs
+              {folderOpen ? (
+                <>
+                  {openedFolder?.playLists?.length < 0 ? (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <h1>Folder is empty</h1>
                     </div>
-                  </div>
-                </div>
-              </Link>
-              {playlists?.map((item, i) => (
-                <PlaylistItem
-                  key={item?._id}
-                  playlist={item}
-                />
-              ))}
+                  ) : (
+                    <></>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link
+                    to={"/collection/tracks"}
+                    className={`w-full ${
+                      location.pathname === `/collection/tracks`
+                        ? "bg-[#232323] hover:bg-[#393939]"
+                        : "hover:bg-[#1A1A1A]"
+                    } min-h-16 p-2 flex items-center gap-2 rounded-md relative cursor-pointer`}
+                  >
+                    <div className="w-12 h-12 rounded-md bg-l flex items-center justify-center">
+                      <FaHeart />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold">Liked Songs</h2>
+                      <div className="flex gap-2 mt-1 items-center">
+                        <div className="text-zinc-400 font-semibold text-sm flex items-center">
+                          Playlist{" "}
+                          <span className="w-1 h-1 mx-1 rounded-full bg-zinc-400 inline-block"></span>
+                          {user?.likedSongs?.length} Songs
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                  {folders?.map((item, i) => (
+                    <Folder key={item?._id} folder={item} />
+                  ))}
+                  {playlists?.map((item, i) => (
+                    <PlaylistItem key={item?._id} playlist={item} />
+                  ))}
+                </>
+              )}
             </div>
           </>
         ) : (

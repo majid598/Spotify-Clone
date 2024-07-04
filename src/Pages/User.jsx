@@ -1,36 +1,44 @@
-import { useState } from "react";
-import { FaRegCopy } from "react-icons/fa";
-import { FiEdit2 } from "react-icons/fi";
-import { LuClock3 } from "react-icons/lu";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { FaRegCopy, FaUserPlus } from "react-icons/fa";
+import { LuClock3, LuMinusCircle } from "react-icons/lu";
+import { MdOutlineReport } from "react-icons/md";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Dialog from "../Components/Dialog";
 import Header from "../Components/Header";
 import Layout from "../Layout/layout";
-import Dialog from "../Components/Dialog";
-import axios from "axios";
 import { server } from "../main";
+import { useSelector } from "react-redux";
+import { IoMdClose } from "react-icons/io";
 
-const Profile = () => {
-  const { user } = useSelector((state) => state.auth);
+const User = () => {
   const navigate = useNavigate();
   const [menu, setMenu] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState(user?.name);
+  const [name, setName] = useState("");
+  const [user, setUser] = useState(null);
+  const { id } = useParams();
+  const { user: me } = useSelector((state) => state.auth);
 
-  const save = () => {
+  const save = () => {};
+  const follow = () => {
     axios
-      .put(
-        `${server}/api/v1/user/me/profile/edit`,
-        { name },
-        { withCredentials: true }
-      )
+      .get(`${server}/api/v1/user/follow/${id}`, { withCredentials: true })
       .then(({ data }) => {
         console.log(data);
-        setName("");
-        setOpen(false);
+        setMenu(false);
       })
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    axios
+      .get(`${server}/api/v1/user/get/${id}`, { withCredentials: true })
+      .then(({ data }) => {
+        console.log(data);
+        setUser(data.user);
+      })
+      .catch((err) => console.log(err));
+  }, [user]);
 
   return (
     <Layout>
@@ -48,16 +56,16 @@ const Profile = () => {
                 <h4 className="text-xm font-semibold text-zinc-200 ml-1">
                   Profile
                 </h4>
-                <button onClick={() => setOpen(true)}>
-                  <h1 className="text-8xl tracking-tight font-extrabold mb-3">
-                    {user?.name}
-                  </h1>
-                </button>
+                <h1 className="text-8xl tracking-tight font-extrabold mb-3">
+                  {user?.name}
+                </h1>
                 <div>
-                  <div className="text-zinc-300 mt-4 font-semibold text-sm flex items-center ml-1">
+                  <div className="text-zinc-300 mt-8 font-semibold text-sm flex items-center ml-1">
                     <Link className="text-sm hover:underline inline-block font-bold">
                       {user?.playLists?.length} Public playlists
                     </Link>
+                    <span className="w-1 h-1 mx-1 rounded-full bg-zinc-400 inline-block"></span>
+                    {user?.followers?.length} followers
                     <span className="w-1 h-1 mx-1 rounded-full bg-zinc-400 inline-block"></span>
                     {user?.following?.length} Following
                   </div>
@@ -66,16 +74,33 @@ const Profile = () => {
             </div>
           </div>
           <div className="w-full relative py-2 m-5 flex justify- gap-5 items-center">
+            <button
+              onClick={follow}
+              className="rounded-full border border-zinc-500 hover:scale-105 hover:border-white px-4 font-bold text-sm py-1.5"
+            >
+              {user?.followers?.includes(me?._id) ? "Following" : "Follow"}
+            </button>
             {menu && (
-              <div className="p-1 bg-[#282828] shadow rounded-md absolute z-[999] top-12 left-0 text-zinc-300 flex flex-col">
-                <button
-                  onClick={() => {
-                    setOpen(true);
-                    setMenu(false);
-                  }}
-                  className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center"
-                >
-                  <FiEdit2 className="text-lg" /> Edit profile
+              <div
+                onClick={follow}
+                className="p-1 bg-[#282828] shadow rounded-md absolute z-[999] top-12 left-24 text-zinc-300 flex flex-col"
+              >
+                <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
+                  {user?.followers?.includes(me?._id) ? (
+                    <>
+                      <IoMdClose className="text-lg text-[#1ED760]" /> Unfollow
+                    </>
+                  ) : (
+                    <>
+                      <FaUserPlus className="text-lg" /> Follow
+                    </>
+                  )}
+                </button>
+                <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
+                  <LuMinusCircle className="text-lg" /> Block
+                </button>
+                <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
+                  <MdOutlineReport className="text-lg" /> Report
                 </button>
                 <button className="w-full p-3 rounded-sm cursor-default text-start hover:bg-[#3E3E3E] text-sm font-bold flex gap-2 items-center">
                   <FaRegCopy className="text-lg" /> Copy link to profile
@@ -114,38 +139,8 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {open && (
-        <Dialog open={open} onClose={() => setOpen(false)}>
-          <div className="w-[30rem]">
-            <h1 className="text-2xl mb-2 font-bold">Edit details</h1>
-            <div className="flex w-full gap-4 mt-3">
-              <div className="w-2/5 flex items-center h-48 shadow-sm rounded-full bg-[#282828]"></div>
-              <div className="w-3/5 h-48 flex flex-col items-end justify-center gap-y-4">
-                <input
-                  type="text"
-                  value={name}
-                  placeholder="Name"
-                  onChange={(e) => setName(e.target.value)}
-                  className="p-2 px-3 w-full rounded-md focus:bg-[#333333] text-sm focus:border-zinc-600 font-bold placeholder:text-zinc-400 bg-[#3E3E3E] border-2 border-transparent outline-none"
-                />
-                <button
-                  onClick={save}
-                  className="px-8 rounded-full hover:scale-105 py-3 bg-white text-black font-bold"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-            <p className="text-xs font-bold mt-3">
-              By proceeding, you agree to give Spotify access to the image you
-              choose to upload. Please make sure you have the right to upload
-              the image.
-            </p>
-          </div>
-        </Dialog>
-      )}
     </Layout>
   );
 };
 
-export default Profile;
+export default User;

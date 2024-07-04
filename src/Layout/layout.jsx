@@ -14,7 +14,7 @@ const layout = ({ children }) => {
       setIsFullScreen(false);
     }
   };
-  console.log(isFullScreen);
+  // console.log(isFullScreen);
 
   useEffect(() => {
     document.addEventListener("fullscreenchange", handleFullScreenChange);

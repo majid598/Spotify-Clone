@@ -13,6 +13,7 @@ import Track from "./Pages/Track";
 import Search from "./Pages/search";
 import { setCurrentSong } from "./states/Reducers/SongReducer";
 import { userExists } from "./states/Reducers/userReducer";
+import User from "./Pages/User";
 // import Lotu from "./Components/Lotu";
 
 const server = "http://localhost:5000";
@@ -35,7 +36,7 @@ const App = () => {
         dispatch(userExists(data.user));
       })
       .catch((err) => console.log(err));
-  }, [dispatch]);
+  }, [dispatch, user]);
   return (
     <Router>
       <Routes>
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/collection/tracks" element={<Collection />} />
         <Route path="/track/:id" element={<Track />} />
+        <Route path="/user/:id" element={<User />} />
         <Route path="/playlist/:id" element={<Playlist />} />
         {/* <Route path="/lotu" element={<Lotu />} /> */}
       </Routes>
