@@ -163,30 +163,41 @@ const Home = ({ user }) => {
             <div className="flex items-center gap-x-2 h-full">
               <div className="w-14 h-full flex items-center justify-center">
                 <img
-                  src={playlists[0]?.songs[0]?.img}
+                  src={playlists?.length > 0 && playlists[0]?.songs[0]?.img}
                   className="w-full h-full"
                   alt=""
                 />
               </div>
-              <h2 className="font-bold text-sm">{playlists[0]?.name}</h2>
+              <h2 className="font-bold text-sm">
+                {playlists?.length > 0 && playlists[0]?.name}
+              </h2>
             </div>
             <button>
               <button
                 onClick={() => {
                   if (
                     currentSong &&
-                    currentSong.id === playlists[0]?.songs[0].id &&
+                    currentSong.id === playlists?.length > 0 &&
+                    playlists[0]?.songs[0].id &&
                     isPlaying
                   ) {
                     togglePlayPause();
                   } else {
-                    dispatch(setCurrentSong(playlists[0]?.songs[0]));
-                    dispatch(setPlaylistId(playlists[0]?._id));
+                    dispatch(
+                      setCurrentSong(
+                        playlists?.length > 0 && playlists[0]?.songs[0]
+                      )
+                    );
+                    dispatch(
+                      setPlaylistId(playlists?.length > 0 && playlists[0]?._id)
+                    );
                   }
                 }}
                 className="play bg-green-600 p-2.5 transition-all duration-300 opacity-0 rounded-full"
               >
-                {isPlaying && playlistId === playlists[0]?._id ? (
+                {isPlaying &&
+                playlistId === playlists?.length > 0 &&
+                playlists[0]?._id ? (
                   <FaPause className="text-black" />
                 ) : (
                   <FaPlay className="text-black" />
