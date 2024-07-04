@@ -14,9 +14,8 @@ import Search from "./Pages/search";
 import { setCurrentSong } from "./states/Reducers/SongReducer";
 import { userExists } from "./states/Reducers/userReducer";
 import User from "./Pages/User";
+import { server } from "./main";
 // import Lotu from "./Components/Lotu";
-
-const server = "http://localhost:5000";
 
 const App = () => {
   const dispatch = useDispatch();
