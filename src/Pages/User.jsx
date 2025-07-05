@@ -10,6 +10,7 @@ import Layout from "../Layout/layout";
 import { server } from "../main";
 import { useSelector } from "react-redux";
 import { IoMdClose } from "react-icons/io";
+import { artists } from "../Data/artists";
 
 const User = () => {
   const navigate = useNavigate();
@@ -30,19 +31,27 @@ const User = () => {
       .catch((err) => console.log(err));
   };
 
+  console.log(user);
   useEffect(() => {
-    axios
-      .get(`${server}/api/v1/user/get/${id}`, { withCredentials: true })
-      .then(({ data }) => {
-        console.log(data);
-        setUser(data.user);
-      })
-      .catch((err) => console.log(err));
-  }, [user]);
+    const existingUser = artists.find((u) => u.name === id);
+  
+    if (existingUser) {
+      setUser(existingUser);
+    } else {
+      axios
+        .get(`${server}/api/v1/user/get/${id}`, { withCredentials: true })
+        .then(({ data }) => {
+          console.log(data);
+          setUser(data.user);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [id, artists]);
+  
 
   return (
     <Layout>
-      <div className="lay relative w-[62rem] h-[88vh] bg-gradient-to-b from-[#202020] to-[#121212] overflow-x-hidden overflow-y-scroll ml rounded-md">
+      <div className="lay relative w-full h-full bg-gradient-to-b from-[#202020] to-[#121212] overflow-x-hidden overflow-y-scroll ml rounded-md">
         <Header bgT={true} />
         <div className="w-full">
           <div className="w-full px-4 h-[30vh] bg-gradient-to-b pt-20 from-[#525252] to-[#2C2C2C]">

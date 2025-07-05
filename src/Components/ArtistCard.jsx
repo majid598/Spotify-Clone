@@ -16,7 +16,7 @@ const ArtistCard = ({ artist, role = "artist" }) => {
     if (role === "profile" && artist?._id === user?._id) {
       navigate(`/profile`);
     } else {
-      navigate(`/user/${artist?._id}`);
+      navigate(`/user/${artist?.name}`);
     }
   };
 
@@ -31,12 +31,10 @@ const ArtistCard = ({ artist, role = "artist" }) => {
   return (
     <div
       onClick={click}
-      className="card w-full p-4 px-3 col-span-1 rounded-md transition-all duration-300 hover:bg-[#2c2c2c] cursor-pointer"
+      className="card w-[11rem] inline-block p-4 px-3 col-span-1 rounded-md transition-all duration-300 hover:bg-[#2c2c2c] cursor-pointer"
     >
       <div
-        className={`${
-          role === "profile" ? "h-44" : "h-36"
-        } w-full overflow-hidden relative bg-no-repeat bg-center bg-cover`}
+        className={`w-full aspect-square overflow-hidden relative bg-no-repeat bg-center bg-cover`}
       >
         <img
           className="w-full rounded-full h-full object-cover object-center"

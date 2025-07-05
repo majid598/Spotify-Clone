@@ -15,10 +15,7 @@ import { useEffect, useRef, useState } from "react";
 const SongBar = ({ elementRef }) => {
   const { user } = useSelector((state) => state.auth);
   const { currentSong, isPlaying } = useSelector((state) => state.songs);
-  const { currentTime, duration, setCurrentTime, audioRef } = useAudioPlayer();
-  const [volume, setVolume] = useState(0.5); // Initial volume
-  let audioContext = null;
-  let gainNode = null;
+  const { currentTime, duration, setCurrentTime, volume, setVolume, audioRef } = useAudioPlayer();
 
   const handleSliderChange = (event) => {
     const newTime = event.target.value;
@@ -38,9 +35,6 @@ const SongBar = ({ elementRef }) => {
   const handleVolumeChange = (event) => {
     const newVolume = parseFloat(event.target.value);
     setVolume(newVolume);
-    if (gainNode) {
-      gainNode.gain.value = newVolume; // Set new volume
-    }
   };
   const handleFullScreen = () => {
     // if (elementRef.current && elementRef.current.requestFullscreen) {
@@ -49,21 +43,6 @@ const SongBar = ({ elementRef }) => {
     //   alert("Your browser does not support fullscreen mode.");
     // }
   };
-
-  useEffect(() => {
-    // Create audio context and gain node on component mount
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    gainNode = audioContext.createGain();
-    gainNode.gain.value = volume; // Initialize volume
-    gainNode.connect(audioContext.destination);
-
-    // Clean up: close audio context on component unmount
-    return () => {
-      if (audioContext.state === "running") {
-        audioContext.close();
-      }
-    };
-  }, [volume]);
 
   return (
     <div className={`fixed bottom-0 z-[999] left-0 ${user ? "h-24" : "h-20"} w-full`}>

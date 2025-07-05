@@ -14,14 +14,14 @@ import { setFolderOpen } from "../states/Reducers/SongReducer";
 import { FilledSearchIcon } from "./Dialog";
 import Folder from "./Folder";
 
-const sidebar = () => {
+const Sidebar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [menu, setMenu] = useState(false);
-  const [playlists, setPlaylists] = useState([null]);
-  const [folders, setFolders] = useState([null]);
+  const [playlists, setPlaylists] = useState([]);
+  const [folders, setFolders] = useState([]);
   const { folderOpen, folderName, openedFolder } = useSelector(
     (state) => state.songs
   );
@@ -65,59 +65,15 @@ const sidebar = () => {
         setFolders(data.folders);
       })
       .catch((err) => console.log(err));
-  }, [axios, playlists, folders]);
+  }, []);
 
   return (
     <div
       onContextMenu={(e) => e.preventDefault()}
-      className="w-[30rem] mr-2 flex flex-col gap-2"
+      className="w-[28rem] flex flex-col gap-2"
     >
-      <div className="uper flex items-center p-5 bg-[#101010] rounded-md w-full">
-        <ul className="flex flex-col gap-5">
-          {!user && (
-            <li className="w-[85px]">
-              <Link to="/">
-                <img src="./assets/spotify.png" alt="" />
-              </Link>
-            </li>
-          )}
-          <Link
-            to={"/"}
-            className={`flex gap-4 items-end font-bold ${
-              location.pathname === "/"
-                ? "text-white"
-                : "text-zinc-400 hover:text-white"
-            } transition-all du\
-          `}
-          >
-            {location.pathname === "/" ? (
-              <GoHomeFill className="text-3xl" />
-            ) : (
-              <GoHome className="text-3xl" />
-            )}
-            <span className="hover:underline">Home</span>
-          </Link>
-          <Link
-            to={"/search"}
-            className={`flex gap-5 items-end transition-all duration-300 ${
-              location.pathname === "/search"
-                ? "text-white"
-                : "text-zinc-400 hover:text-white"
-            } font-bold`}
-          >
-            {location.pathname === "/search" ? (
-              <FilledSearchIcon />
-            ) : (
-              <FaSearch className="text-2xl" />
-            )}
-            <span className="hover:underline">Search</span>
-          </Link>
-        </ul>
-      </div>
       <div
-        className={`down bg-[#101010] overflow-hidden rounded-md w-full ${
-          user ? "h-[73.6vh]" : "h-[67.4vh]"
-        }`}
+        className={`bg-[#101010] overflow-hidden rounded-md w-full h-full`}
       >
         <div className="nav w-full h-14 px-5 flex items-center justify-between">
           <button className="flex font-bold items-end opacity-70 hover:opacity-100 transition-all duration-300">
@@ -208,7 +164,7 @@ const sidebar = () => {
             >
               {folderOpen ? (
                 <>
-                  {openedFolder?.playLists?.length < 0 ? (
+                  {openedFolder?.playLists?.length === 0 ? (
                     <div className="w-full h-full flex items-center justify-center">
                       <h1>Folder is empty</h1>
                     </div>
@@ -318,4 +274,4 @@ const sidebar = () => {
   );
 };
 
-export default sidebar;
+export default Sidebar;

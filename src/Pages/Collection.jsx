@@ -37,7 +37,7 @@ const Collection = () => {
 
   return (
     <Layout>
-      <div className="lay relative w-[62rem] h-[88vh] bg-gradient-to-b from-[#202020] to-[#121212] overflow-x-hidden overflow-y-scroll ml rounded-md">
+      <div className="lay relative w-full h-full bg-gradient-to-b from-[#202020] to-[#121212] overflow-x-hidden overflow-y-scroll ml rounded-md">
         <Header bgT={true} />
         <div className="w-full">
           <div className="w-full px-4 h-[30vh] bg-gradient-to-b pt-20 from-[#525252] to-[#2C2C2C]">
