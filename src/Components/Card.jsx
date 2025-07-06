@@ -1,6 +1,6 @@
 import { FaPause, FaPlay, FaRegFolder } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentSong } from "../states/Reducers/SongReducer";
+import { setCurrentSong, setPlayingState } from "../states/Reducers/SongReducer";
 import useAudioPlayer from "./useAudioPlayer";
 import { MdAddchart, MdIosShare } from "react-icons/md";
 import { LuListMusic, LuMinusCircle, LuPlusCircle } from "react-icons/lu";
@@ -37,12 +37,13 @@ const Card = ({ song }) => {
   const { currentSong, isPlaying } = useSelector((state) => state.songs);
 
   const handlePlay = () => {
-    if (currentSong && currentSong.id === song.id && isPlaying) {
-      togglePlayPause();
+    if (currentSong && currentSong.id === song.id) {
+      togglePlayPause(); // same song → toggle play/pause
     } else {
       dispatch(setCurrentSong(song));
     }
   };
+  
 
   const handleClick = (e) => {
     if (menuRef.current && !menuRef.current.contains(e.target)) {

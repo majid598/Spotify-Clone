@@ -10,7 +10,7 @@ import Layout from "../Layout/layout";
 import { server } from "../main";
 import { useSelector } from "react-redux";
 import { IoMdClose } from "react-icons/io";
-import { artists } from "../Data/artists";
+import artists from "../Data/artists.json";
 
 const User = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const User = () => {
   console.log(user);
   useEffect(() => {
     const existingUser = artists.find((u) => u.name === id);
-  
+
     if (existingUser) {
       setUser(existingUser);
     } else {
@@ -47,7 +47,6 @@ const User = () => {
         .catch((err) => console.log(err));
     }
   }, [id, artists]);
-  
 
   return (
     <Layout>
