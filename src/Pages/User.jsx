@@ -10,7 +10,7 @@ import Layout from "../Layout/layout";
 import { server } from "../main";
 import { useSelector } from "react-redux";
 import { IoMdClose } from "react-icons/io";
-import artists from "../Data/artists.json";
+import artists from "../data/artists.json";
 
 const User = () => {
   const navigate = useNavigate();
